@@ -14,10 +14,12 @@ public class Galaxy : MonoBehaviour
     private float height;
     private float x;
     private float z;
+    private int index = 0;
+    private int prefabIndex = 0;
 
     private void Start()
     {
-        CreateGalaxy();
+        CreateGalaxyTrue();
     }
 
     private void CreateGalaxy()
@@ -32,7 +34,6 @@ public class Galaxy : MonoBehaviour
                 z = Random.Range(-positionRange.y, positionRange.y);
                 Vector3 myPosition = transform.position;
                 Vector3 createPosition = new Vector3(myPosition.x + starOffSet * i + x, myPosition.y, myPosition.z + starOffSet * j + z);
-                int prefabIndex = 0;
                 var star = Instantiate(spaceObjects[prefabIndex], createPosition, Quaternion.identity);
                 star.transform.parent = transform;
                 width = myPosition.x + starOffSet * i;
@@ -42,6 +43,32 @@ public class Galaxy : MonoBehaviour
             }
         }
         transform.position = new Vector3(-width/2, 0, -height/2);
+    }
+
+    private void CreateGalaxyTrue()
+    {
+        size = size / 2;
+        Vector3 startPos = transform.position;
+        float smaler = 1;
+        for (int x = 0; x < size; x++)
+        {
+            for (int y = 0; y < size; y++)
+            {
+                float galaxy_step = 44;
+                float step = 1.1f;
+                float indexSpace = step * (galaxy_step + index);
+                float xx = (startPos.x + Mathf.Sin(indexSpace) * indexSpace) / smaler;
+                float zz = (startPos.z + Mathf.Cos(indexSpace) * indexSpace) / smaler;
+
+
+                Vector3 myPos = transform.position;
+                Vector3 createPos = new Vector3(xx, 0, zz);
+                var star = Instantiate(spaceObjects[prefabIndex],createPos,Quaternion.identity);
+                Star starScript = star.GetComponent<Star>();
+                stars.Add(starScript);
+                index++;
+            }
+        }
     }
 
     public List<Star> GetStars()

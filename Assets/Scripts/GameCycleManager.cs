@@ -68,7 +68,7 @@ public class GameCycleManager : MonoBehaviour
     {
         Camera cameraMain = Camera.main;
 
-        float cameraSpeed = 0.1f;
+        float cameraSpeed = 0.05f;
 
         Vector3 cameraPosition = cameraMain.transform.position;
 
@@ -76,7 +76,7 @@ public class GameCycleManager : MonoBehaviour
 
         Vector3 startPosition = cameraPosition;
 
-        Vector3 endPosition = new Vector3(homePosition.x, cameraPosition.y, homePosition.z);
+        Vector3 endPosition = new Vector3(homePosition.x, cameraPosition.y, homePosition.z - cameraPosition.z);
 
         float stopDistance = 0.1f;
 

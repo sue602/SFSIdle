@@ -977,8 +977,8 @@ MonoBehaviour:
   zoomValue: 0
   zoomValueDebug: 0
   zoomLerpSpeed: 0.2
-  zoomMin: 3
-  zoomMax: 45
+  zoomMin: 6
+  zoomMax: 145
   zoomLast: 0
 --- !u!114 &963194233
 MonoBehaviour:
