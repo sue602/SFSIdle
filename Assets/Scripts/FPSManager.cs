@@ -15,6 +15,8 @@ public class FPSManager : MonoBehaviour
     void Start()
     {
         m_FpsNextPeriod = Time.realtimeSinceStartup + fpsMeasurePeriod;
+        QualitySettings.vSyncCount = 1;
+        Application.targetFrameRate = 60;
     }
 
     void Update()

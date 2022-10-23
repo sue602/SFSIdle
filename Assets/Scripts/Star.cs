@@ -41,7 +41,7 @@ public class Star : SpaceObject
 
         float orbitRadiusCurrent = 5;
 
-        float orbitRadiusStep = 2;
+        float orbitRadiusStep = 2.5f;
 
         for (int i = 0; i < planetCount; i++)
         {

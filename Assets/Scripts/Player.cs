@@ -18,6 +18,9 @@ public class Player : MonoBehaviour
     [SerializeField] private PointerEventData m_PointerEventData;
     [SerializeField] private EventSystem m_EventSystem;
 
+    private UIManager uiManager;
+    private GameCycleManager gameCycleManager;
+
     void Start()
     {
         Input.simulateMouseWithTouches = true;
@@ -27,6 +30,9 @@ public class Player : MonoBehaviour
         m_Raycaster = FindObjectOfType<GraphicRaycaster>();
         //Fetch the Event System from the Scene
         m_EventSystem = FindObjectOfType<EventSystem>();
+
+        uiManager = FindObjectOfType<UIManager>();
+        gameCycleManager = FindObjectOfType<GameCycleManager>();
     }
 
     void Update()
@@ -50,8 +56,6 @@ public class Player : MonoBehaviour
 
     private void Brain()
     {
-        UIManager uiManager = FindObjectOfType<UIManager>();
-
         MouseX = Input.GetAxis("Mouse X");
         MouseY = Input.GetAxis("Mouse Y");
 
@@ -76,6 +80,24 @@ public class Player : MonoBehaviour
                 //Star
             }
 
+            //Planet
+            Planet planet = hit.transform.GetComponent<Planet>();
+
+            if (planet != null)
+            {
+
+            }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (planet != null)
+                {
+                    gameCycleManager.SetCurrentPlanet(planet);
+                    uiManager.ButtonLandEnable(true);
+                }
+                //Planet
+            }
+
         }
         else
         {
@@ -84,6 +106,7 @@ public class Player : MonoBehaviour
                 if (!UIRaycasted())
                 {
                     uiManager.ButtonColonizeEnable(false);
+                    uiManager.ButtonLandEnable(false);
                 }
 
             }

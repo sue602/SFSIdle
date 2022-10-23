@@ -49,13 +49,13 @@ public class Galaxy : MonoBehaviour
     {
         size = size / 2;
         Vector3 startPos = transform.position;
-        float smaler = 1;
+        float smaler = 0.5f;
         for (int x = 0; x < size; x++)
         {
             for (int y = 0; y < size; y++)
             {
-                float galaxy_step = 44;
-                float step = 1.1f;
+                float galaxy_step = 10;
+                float step = 1.1f; // Angle of Galaxy
                 float indexSpace = step * (galaxy_step + index);
                 float xx = (startPos.x + Mathf.Sin(indexSpace) * indexSpace) / smaler;
                 float zz = (startPos.z + Mathf.Cos(indexSpace) * indexSpace) / smaler;

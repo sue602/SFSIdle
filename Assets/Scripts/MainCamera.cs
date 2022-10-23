@@ -27,7 +27,6 @@ public class MainCamera : MonoBehaviour
 
     private void Start()
     {
-        Application.targetFrameRate = 300;
         Input.simulateMouseWithTouches = true;
         Started = true;
     }

@@ -1,6 +1,13 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+public enum SpaceMode
+{
+    Planet,
+    Space
+}
 
 public class GameCycleManager : MonoBehaviour
 {
@@ -10,7 +17,12 @@ public class GameCycleManager : MonoBehaviour
     private Galaxy galaxy;
     private Star homeStar;
     private UIManager uiManager;
-
+    private CharacterManager characterManager;
+    private Planet currentPlanet = null;
+    [SerializeField] private SpaceMode spaceMode;
+    private CameraManager cameraManager;
+    [SerializeField] private CinemachineVirtualCamera cinemachineCameraSpace;
+    [SerializeField] private CinemachineVirtualCamera cinemachineCameraPlanet;
     private void Start()
     {
         StartInit();
@@ -25,7 +37,12 @@ public class GameCycleManager : MonoBehaviour
     private void StartInit()
     {
         uiManager = FindObjectOfType<UIManager>();
+        characterManager = FindObjectOfType<CharacterManager>();
+        cameraManager = FindObjectOfType<CameraManager>();
         uiManager.ButtonColonizeEnable(false);
+        uiManager.ButtonLandEnable(false);
+
+        spaceMode = SpaceMode.Space;
     }
 
     private void SetHome() // home star selection
@@ -76,7 +93,7 @@ public class GameCycleManager : MonoBehaviour
 
         Vector3 startPosition = cameraPosition;
 
-        Vector3 endPosition = new Vector3(homePosition.x, cameraPosition.y, homePosition.z - cameraPosition.z);
+        Vector3 endPosition = new Vector3(homePosition.x, cameraPosition.y, homePosition.z - (cameraPosition.z + 144)); // Bad code, must rewrite in future
 
         float stopDistance = 0.1f;
 
@@ -94,5 +111,20 @@ public class GameCycleManager : MonoBehaviour
     public void ButtonShowHome()
     {
         homeShow = true;
+    }
+
+    public void ButtonCreateCharacterAtPlanet()
+    {
+        Vector3 createPosition = new Vector3(currentPlanet.transform.position.x, currentPlanet.transform.position.y + 3, currentPlanet.transform.position.z);
+        characterManager.CreateCharacter(0,createPosition);
+        cinemachineCameraSpace.Priority = 1; // Set Space camera to low priority
+        cinemachineCameraPlanet.Priority = 2; // Set main camera - planet camera
+        uiManager.ButtonLandEnable(false);
+    }
+
+    public void SetCurrentPlanet(Planet planet)
+    {
+        currentPlanet = planet;
+        spaceMode = SpaceMode.Planet;
     }
 }

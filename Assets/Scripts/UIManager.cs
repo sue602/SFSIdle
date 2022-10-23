@@ -9,6 +9,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button buttonColozine;
     [SerializeField] private Image iconHome;
     [SerializeField] private Button buttonShowHome;
+    [SerializeField] private Button buttonLand;
+
+    public void ButtonLandEnable(bool enable)
+    {
+        buttonLand.gameObject.SetActive(enable);
+    }
 
     public void ButtonColonizeEnable(bool enable)
     {

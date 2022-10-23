@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
+    //Space
     [SerializeField] private Vector3 direction;
     private Vector3 startPosition;
     private Vector3 movingPosition;
@@ -16,6 +17,10 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private float mouseSpeedMin;
     [SerializeField] private bool mouseMoving;
     [SerializeField] private bool mousePressed = false;
+    [SerializeField] private float mouseSpeedMultypler;
+    //Space
+
+    [SerializeField] public bool spaceMode = true; // if camera in space mode
 
     private void Start()
     {
@@ -24,16 +29,22 @@ public class CameraManager : MonoBehaviour
 
     private void Update()
     {
+        if (spaceMode)
+        {
 #if UNITY_EDITOR
-        PCScroll();
+            PCScroll();
 #endif
 #if UNITY_ANDROID
-        MobileScroll();
+            MobileScroll();
 #endif
+        }
     }
 
     private void PCScroll()
     {
+        mouseX = Input.GetAxis("Mouse X");
+        mouseY = Input.GetAxis("Mouse Y");
+
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             startPosition = Input.mousePosition;
@@ -45,10 +56,13 @@ public class CameraManager : MonoBehaviour
             movingPosition = Input.mousePosition;
 
             direction = movingPosition - startPosition;
-            direction = new Vector3(direction.x + Input.GetAxis("Mouse X"), direction.y, direction.z + Input.GetAxis("Mouse Y"));
-            if (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0)
-            {
 
+            mouseX = mouseX * mouseSpeedMultypler;
+            mouseY = mouseY * mouseSpeedMultypler;
+
+            direction = new Vector3(direction.x + mouseX, direction.y, direction.z + mouseY);
+            if (mouseX != 0 || mouseY != 0)
+            {
                 speed = Mathf.Lerp(speed, speedMax, speedLerp);
             }
         }
@@ -67,12 +81,16 @@ public class CameraManager : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, newPosition, speed);
 
         speed = Mathf.Clamp(speed, speedMin, speedMax);
+
     }
 
     private void MobileScroll()
     {
         if (Input.touchCount > 0)
         {
+            mouseX = Input.GetAxis("Mouse X");
+            mouseY = Input.GetAxis("Mouse Y");
+
             Touch touch = Input.GetTouch(0);
 
             if (Input.touchCount == 1)
@@ -89,9 +107,9 @@ public class CameraManager : MonoBehaviour
 
                     direction = movingPosition - startPosition;
 
-                    direction = new Vector3(direction.x + Input.GetAxis("Mouse X"), direction.y, direction.z + Input.GetAxis("Mouse Y"));
+                    direction = new Vector3(direction.x + mouseX, direction.y, direction.z + mouseY);
 
-                    if (Input.GetAxis("Mouse X") != 0 || Input.GetAxis("Mouse Y") != 0)
+                    if (mouseX != 0 || mouseY != 0)
                     {
                         speed = Mathf.Lerp(speed, speedMax, speedLerp);
                     }
