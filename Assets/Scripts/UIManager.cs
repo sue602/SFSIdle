@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image iconHome;
     [SerializeField] private Button buttonShowHome;
     [SerializeField] private Button buttonLand;
+    [SerializeField] private TextMeshProUGUI textDebug;
 
     public void ButtonLandEnable(bool enable)
     {
@@ -43,5 +44,10 @@ public class UIManager : MonoBehaviour
         {
             ButtonShowHomeEnable(true);
         }
+    }
+
+    public void SetDebug(string text)
+    {
+        textDebug.text = text;
     }
 }

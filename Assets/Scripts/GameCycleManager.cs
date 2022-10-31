@@ -3,12 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum SpaceMode
-{
-    Planet,
-    Space
-}
-
 public class GameCycleManager : MonoBehaviour
 {
     [SerializeField] private bool homePlanetSelected = false;
@@ -16,13 +10,14 @@ public class GameCycleManager : MonoBehaviour
     [SerializeField] private bool homeShow = false;
     private Galaxy galaxy;
     private Star homeStar;
-    private UIManager uiManager;
     private CharacterManager characterManager;
     private Planet currentPlanet = null;
-    [SerializeField] private SpaceMode spaceMode;
     private CameraManager cameraManager;
     [SerializeField] private CinemachineVirtualCamera cinemachineCameraSpace;
     [SerializeField] private CinemachineVirtualCamera cinemachineCameraPlanet;
+
+    public UIManager uiManager;
+
     private void Start()
     {
         StartInit();
@@ -41,8 +36,6 @@ public class GameCycleManager : MonoBehaviour
         cameraManager = FindObjectOfType<CameraManager>();
         uiManager.ButtonColonizeEnable(false);
         uiManager.ButtonLandEnable(false);
-
-        spaceMode = SpaceMode.Space;
     }
 
     private void SetHome() // home star selection
@@ -115,16 +108,24 @@ public class GameCycleManager : MonoBehaviour
 
     public void ButtonCreateCharacterAtPlanet()
     {
-        Vector3 createPosition = new Vector3(currentPlanet.transform.position.x, currentPlanet.transform.position.y + 3, currentPlanet.transform.position.z);
-        characterManager.CreateCharacter(0,createPosition);
+        //Vector3 createPosition = new Vector3(currentPlanet.transform.position.x, currentPlanet.transform.position.y + 3, currentPlanet.transform.position.z);
+        //characterManager.CreateCharacter(0,createPosition);
         cinemachineCameraSpace.Priority = 1; // Set Space camera to low priority
         cinemachineCameraPlanet.Priority = 2; // Set main camera - planet camera
+        //cinemachineCameraPlanet.Follow = currentPlanet.transform;
+        //cinemachineCameraPlanet.LookAt = currentPlanet.transform;
+        CameraPlanet cameraPlanet = FindObjectOfType<CameraPlanet>();
+        cameraPlanet.Target = currentPlanet.transform;
         uiManager.ButtonLandEnable(false);
     }
 
     public void SetCurrentPlanet(Planet planet)
     {
         currentPlanet = planet;
-        spaceMode = SpaceMode.Planet;
+    }
+
+    public CinemachineVirtualCamera GetPlanetCamera()
+    {
+        return cinemachineCameraPlanet;
     }
 }

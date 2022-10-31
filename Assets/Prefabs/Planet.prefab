@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OrbitRadius: 100
-  ScaleRange: {x: 0.4, y: 0.5}
+  ScaleRange: {x: 0.7, y: 1}
 --- !u!114 &-2966555150671463945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -248,8 +248,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c6f4ea7176fe754e8e4b908179b42d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedMin: 1
-  speedMax: 2
+  speedMin: 30
+  speedMax: 50
   Inverse: 0
 --- !u!54 &3097579709006885751
 Rigidbody:

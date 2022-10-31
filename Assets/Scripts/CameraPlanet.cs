@@ -1,8 +1,9 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainCamera : MonoBehaviour
+public class CameraPlanet : MonoBehaviour
 {
     public float turnSpeed = 4.0f;
     public float MouseX;
@@ -10,6 +11,8 @@ public class MainCamera : MonoBehaviour
 
     public Transform Target;
     public float targetDistance;
+    public float minDistance = 5;
+    public float maxDistance = 400;
     public float minTurnAngle = -90.0f;
     public float maxTurnAngle = 0.0f;
     private float rotX;
@@ -19,42 +22,48 @@ public class MainCamera : MonoBehaviour
     public float perspectiveZoomSpeed = 0.5f;        // The rate of change of the field of view in perspective mode.
     public float orthoZoomSpeed = 0.5f;        // The rate of change of the orthographic size in orthographic mode.
 
-    public bool cameraMoved;
-    public bool cameraZoom;
-    public bool cameraMovedPressed;
-
     public Vector3 OffSetPos;
     public float lerpSpeed = 1f;
 
-    private Vector3 startGamePos = new Vector3(0, 0, 0);
+    private Vector3 startGamePos = new Vector3(0, 0, -30);
     private Quaternion startGameRotation = new Quaternion(0, 0, 0, 1);
 
-    private Vector3 playGamePos = new Vector3(0, 0, -10);
-    private Quaternion playGameRotation = new Quaternion(0, 0, 0, 1);
+    public bool zoomLast = false;
 
-    public bool Started = false;
+    private GameCycleManager gameCycleManager;
+
+    [SerializeField] private CinemachineVirtualCamera planetCamera;
+    [SerializeField] private CinemachineTransposer transposer;
+
+    [SerializeField] private float wheelSpeed;
+
+    [SerializeField] private float newZ = 0;
+
+    [SerializeField] float zoomSpeed = 0.1f;
+
+    [SerializeField] float followOffsetMin = -0.9f;
+    [SerializeField] float followOffsetMax = -10f;
 
     void Start()
     {
         Input.simulateMouseWithTouches = true;
         transform.position = startGamePos;
         transform.rotation = Quaternion.Euler(startGameRotation.x, startGameRotation.y, startGameRotation.z);
+        gameCycleManager = FindObjectOfType<GameCycleManager>();
+        planetCamera = gameCycleManager.GetPlanetCamera();
+        transposer = planetCamera.GetCinemachineComponent<CinemachineTransposer>();
     }
 
     void Update()
     {
-        CameraUpdate();
-    }
-
-    void CameraUpdate()
-    {
-        if (Started && Target != null)
+        if (Target != null)
         {
 #if UNITY_EDITOR
             PCCameraUpdate();
 #endif
 #if UNITY_ANDROID
             AndroidCameraUpdate();
+            AndroidCameraZoom();
 #endif
         }
     }
@@ -75,13 +84,38 @@ public class MainCamera : MonoBehaviour
             // rotate the camera
             transform.eulerAngles = new Vector3(-rotX, transform.eulerAngles.y + y, rotZ);
         }
-        // move the camera position
-        transform.position = Vector3.Lerp(transform.position, Target.position - (transform.forward * targetDistance), Speed);
+
+        transform.position = Target.position;
+
+        float mouseWheelInput = Input.GetAxis("Mouse ScrollWheel");
+
+        wheelSpeed = mouseWheelInput;
+
+        if (wheelSpeed < 0)
+        {
+            newZ = transposer.m_FollowOffset.z -= zoomSpeed;
+        }
+
+        if (wheelSpeed > 0)
+        {
+            newZ = transposer.m_FollowOffset.z += zoomSpeed;
+        }
+
+        if(newZ >= followOffsetMin)
+        {
+            newZ = followOffsetMin;
+        }else if (newZ <= followOffsetMax)
+        {
+            newZ = followOffsetMax;
+        }
+
+        transposer.m_FollowOffset = new Vector3(transposer.m_FollowOffset.x, transposer.m_FollowOffset.y, newZ);
+
     }
 
     void AndroidCameraUpdate()
     {
-        if (Input.touchCount == 1)
+        if (Input.touchCount == 1 && zoomLast == false)
         {
             var touch = Input.GetTouch(0);
 
@@ -102,15 +136,16 @@ public class MainCamera : MonoBehaviour
             }
         }
 
-        // move the camera position
-        transform.position = Vector3.Lerp(transform.position, Target.position - (transform.forward * targetDistance), Speed);
+        transform.position = Target.position;
+
     }
 
-    public void Zoom()
+    public void AndroidCameraZoom()
     {
         // If there are two touches on the device...
         if (Input.touchCount == 2)
         {
+            zoomLast = true;
             // Store both touches.
             Touch touchZero = Input.GetTouch(0);
             Touch touchOne = Input.GetTouch(1);
@@ -128,24 +163,42 @@ public class MainCamera : MonoBehaviour
                 // Find the difference in the distances between each frame.
                 float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
-                // If the camera is orthographic...
-                if (Camera.main.orthographic)
-                {
-                    // ... change the orthographic size based on the change in distance between the touches.
-                    Camera.main.orthographicSize += deltaMagnitudeDiff * orthoZoomSpeed;
+                targetDistance += deltaMagnitudeDiff * orthoZoomSpeed;
 
-                    // Make sure the orthographic size never drops below zero.
-                    Camera.main.orthographicSize = Mathf.Max(Camera.main.orthographicSize, 0.1f);
-                }
-                else
-                {
-                    // Otherwise change the field of view based on the change in distance between the touches.
-                    Camera.main.fieldOfView += deltaMagnitudeDiff * perspectiveZoomSpeed;
+                targetDistance = Mathf.Clamp(targetDistance, minDistance, maxDistance);
 
-                    // Clamp the field of view to make sure it's between 0 and 180.
-                    Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, 10f, 90f);
+                float mouseWheelInput = deltaMagnitudeDiff;
+
+                wheelSpeed = mouseWheelInput;
+
+                if (wheelSpeed < 0)
+                {
+                    newZ = transposer.m_FollowOffset.z += zoomSpeed;
                 }
+
+                if (wheelSpeed > 0)
+                {
+                    newZ = transposer.m_FollowOffset.z -= zoomSpeed;
+                }
+
+                if (newZ >= followOffsetMin)
+                {
+                    newZ = followOffsetMin;
+                }
+                else if (newZ <= followOffsetMax)
+                {
+                    newZ = followOffsetMax;
+                }
+
+                transposer.m_FollowOffset = new Vector3(transposer.m_FollowOffset.x, transposer.m_FollowOffset.y, newZ);
+
+                gameCycleManager.uiManager.SetDebug(mouseWheelInput.ToString());
             }
+        }
+
+        if (Input.touchCount == 0)
+        {
+            zoomLast = false;
         }
     }
 
@@ -155,5 +208,11 @@ public class MainCamera : MonoBehaviour
         if (angle > 360)
             return angle - 360;
         return angle;
+    }
+
+
+    public void SetTarget(Transform target)
+    {
+        Target = target;
     }
 }

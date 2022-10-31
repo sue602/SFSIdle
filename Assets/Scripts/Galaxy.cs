@@ -16,6 +16,7 @@ public class Galaxy : MonoBehaviour
     private float z;
     private int index = 0;
     private int prefabIndex = 0;
+    
 
     private void Start()
     {
@@ -60,9 +61,8 @@ public class Galaxy : MonoBehaviour
                 float xx = (startPos.x + Mathf.Sin(indexSpace) * indexSpace) / smaler;
                 float zz = (startPos.z + Mathf.Cos(indexSpace) * indexSpace) / smaler;
 
-
                 Vector3 myPos = transform.position;
-                Vector3 createPos = new Vector3(xx, 0, zz);
+                Vector3 createPos = new Vector3(xx, transform.position.y, zz);
                 var star = Instantiate(spaceObjects[prefabIndex],createPos,Quaternion.identity);
                 Star starScript = star.GetComponent<Star>();
                 stars.Add(starScript);

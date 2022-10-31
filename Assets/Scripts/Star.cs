@@ -8,8 +8,6 @@ public class Star : SpaceObject
     public Vector2 ScaleRange;
     public bool homeStar = false;
 
-    private bool open = false;
-
     private void Start()
     {
         float scaleValue = Random.Range(ScaleRange.x, ScaleRange.y);
@@ -60,14 +58,6 @@ public class Star : SpaceObject
             planetOrbit.SetTarget(transform);
 
             planets.Add(planetScript);
-        }
-    }
-
-    public void Open()
-    {
-        if (!open)
-        {
-            open = true;
         }
     }
 }
