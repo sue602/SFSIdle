@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 1250966431192382211}
   - component: {fileID: 2641993596333420286}
   - component: {fileID: 4132126127262810593}
-  - component: {fileID: 5559338165861436437}
   m_Layer: 0
   m_Name: Star
   m_TagString: Untagged
@@ -30,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 746664222079277782}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8031785738387790985}
@@ -44,7 +43,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 746664222079277782}
-  m_Mesh: {fileID: -4095922512963967095, guid: 7c855bc623eca3247999bd9d9f7ecda4, type: 3}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1250966431192382211
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -99,18 +98,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c9239f57573b6d42aa8f42b5910499b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spaceObjectsPrefabs:
+  spaceObjectsPrefabsPlanets:
   - {fileID: 9144504246647075280, guid: c6ff4fa07c0eb1b41ab6a53d1ecc73bb, type: 3}
+  spaceObjectsPrefabsAsteroids:
+  - {fileID: 2100001186531592647, guid: 3e2db17364e11054e8d830e258849af4, type: 3}
   planets: []
-  PlanetCount: 4
-  colors:
-  - {r: 0.53333336, g: 0.26666668, b: 0.9490196, a: 1}
-  - {r: 0.36078432, g: 0.2784314, b: 0.9882353, a: 1}
-  - {r: 0.29803923, g: 0.3882353, b: 0.9019608, a: 1}
-  - {r: 0.2784314, g: 0.57254905, b: 0.9882353, a: 1}
-  - {r: 0.26666668, g: 0.7294118, b: 0.9490196, a: 1}
-  ScaleRange: {x: 2, y: 2.5}
-  homeStar: 0
+  asteroids: []
+  AsteroidsCount: 10
 --- !u!135 &4132126127262810593
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -122,21 +116,8 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5559338165861436437
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 746664222079277782}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4838c0f91ddd49f448a0d0dad9f75c07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  miningValue: 0
 --- !u!1 &2912680772972751971
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,7 +163,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 2
-  m_Range: 30
+  m_Range: 9
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10

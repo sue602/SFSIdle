@@ -2,12 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Planet : MonoBehaviour
+public class Planet : SpaceObject
 {
-    public float OrbitRadius = 2f;
-    public Vector2 ScaleRange;
-    private SpaceObject star;
+    public int AsteroidsCount;
+    [SerializeField] private Transform center;
 
+    [SerializeField] private float orbitRadiusCurrent = 42;
+    [SerializeField] private float orbitRadiusStep = 6f;
+    [SerializeField] private List<SpaceShark> unitsSpacePrefabs;
+    [SerializeField] private Vector3 spawnLeftPosition;
+    [SerializeField] private Vector3 spawnRightPosition;
+    
     private void Start()
     {
         Init();
@@ -15,46 +20,59 @@ public class Planet : MonoBehaviour
 
     private void Init()
     {
-        float scaleValue = Random.Range(ScaleRange.x, ScaleRange.y);
-        transform.localScale = new Vector3(scaleValue, scaleValue, scaleValue);
-
-        star = transform.parent.GetComponent<Star>();
-
-        var angle = Random.Range(0, 2 * Mathf.PI);
-        var x = Mathf.Cos(angle) * OrbitRadius;
-        var z = Mathf.Sin(angle) * OrbitRadius;
-
-        Vector3 randomPoint = new Vector3(x, transform.position.y, z) + star.transform.position;
-        transform.position = randomPoint;
+        CreateAsteroids(AsteroidsCount);
     }
 
-    private void GenerateHeight()
+    private void CreateAsteroids(int asteroidCount)
     {
-        MeshFilter meshFilter = GetComponent<MeshFilter>();
-        Mesh mesh = meshFilter.mesh;
-        var vertices = mesh.vertices;
-        var normals = mesh.normals;
-        var triangles = mesh.triangles;
+        var planetScript = FindObjectOfType<Planet>();
+        center = planetScript.transform;
+        int spaceObjectPrefabIndex = 0;
 
-        for (int i = 0; i < vertices.Length; i++)
+        for (int i = 0; i < asteroidCount; i++)
         {
-            Vector3 vertice = transform.TransformPoint(vertices[i]);
-            Vector3 center = transform.position;
+            float randomY = Random.Range(-25, 25);
+            Vector3 asteroidOffset = new Vector3(0, randomY, 0);
+            Vector3 createPos = transform.position + asteroidOffset;
 
-            Vector3 difference = vertice - center;
+            var asteroid = Instantiate(spaceObjectsPrefabsAsteroids[spaceObjectPrefabIndex], createPos, Quaternion.identity);
 
-            float sizeScale = Random.Range(-0.05f,0.15f);
+            //asteroid.transform.parent = transform;
 
-            Vector3 result = difference.normalized * sizeScale;
+            Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
 
-            vertices[i] = vertices[i] + result;
+            asteroidScript.OrbitRadius = orbitRadiusCurrent;
+            orbitRadiusCurrent += orbitRadiusStep;
 
+            Vector3 asteroidPosition = transform.position;
+
+            Orbit asteroidOrbit = asteroid.GetComponent<Orbit>();
+            asteroidOrbit.SetTarget(transform);
+
+            asteroids.Add(asteroidScript);
         }
+    }
 
-        mesh.SetVertices(vertices);
-        mesh.SetNormals(vertices);
+    private void SpawnChild(int unitIndex)
+    {
+        Vector3 createPosition = transform.position;
 
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
+        int randomSide = Random.Range(0, 2);
+        
+        if (randomSide == 0)
+        {
+            createPosition = createPosition + spawnLeftPosition;
+        }
+        else
+        {
+            createPosition = createPosition + spawnRightPosition;
+        }
+        
+        Instantiate(unitsSpacePrefabs[unitIndex], createPosition, Quaternion.identity);
+    }
+
+    public void ButtonCreateChild()
+    {
+        SpawnChild(0);
     }
 }

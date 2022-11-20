@@ -5,53 +5,84 @@ using UnityEngine;
 
 public class CameraPlanet : MonoBehaviour
 {
-    public float turnSpeed = 4.0f;
-    public float MouseX;
-    public float MouseY;
-
     public Transform Target;
-    public float targetDistance;
-    public float minDistance = 5;
-    public float maxDistance = 400;
-    public float minTurnAngle = -90.0f;
-    public float maxTurnAngle = 0.0f;
-    private float rotX;
+    [SerializeField] private CinemachineVirtualCamera planetCamera;
+    private CinemachineTransposer transposer;
 
-    public float Speed = 0.2f;
+    // PC Camera
+    ///////////////////////////////////////////////////
 
-    public float perspectiveZoomSpeed = 0.5f;        // The rate of change of the field of view in perspective mode.
-    public float orthoZoomSpeed = 0.5f;        // The rate of change of the orthographic size in orthographic mode.
+    //Moving
+    [SerializeField] private float minTurnAnglePC = -90.0f;
+    [SerializeField] private float maxTurnAnglePC = 0.0f;
 
-    public Vector3 OffSetPos;
-    public float lerpSpeed = 1f;
+    [SerializeField] private float turnSpeedPC = 4.0f;
+    private float MouseXPC;
+    private float MouseYPC;
 
-    private Vector3 startGamePos = new Vector3(0, 0, -30);
-    private Quaternion startGameRotation = new Quaternion(0, 0, 0, 1);
+    private float rotXPC;
+    //Moving
 
-    public bool zoomLast = false;
+    //Zoom
+    private float wheelSpeedPC;
+
+    private float newZPC;
+
+    [SerializeField] float zoomSpeedPC;
+
+    [SerializeField] float minDistancePC;
+    [SerializeField] float maxDistancePC;
+
+    //private bool zoomLastPC = false;
+    //Zoom
+
+    // PC Camera
+    ///////////////////////////////////////////////////
+
+
+    // Android
+    ///////////////////////////////////////////////////
+
+    //Moving
+    [SerializeField] private float minTurnAngleMobile = -90.0f;
+    [SerializeField] private float maxTurnAngleMobile = 0.0f;
+
+    [SerializeField] private float turnSpeedMobile = 4.0f;
+    private float MouseXMobile;
+    private float MouseYMobile;
+
+    private float rotXMobile;
+    //Moving
+
+    //Zoom
+
+
+    [SerializeField] float zoomSpeedMobile;
+
+    [SerializeField] private float orthoZoomSpeedMobile;
+
+    [SerializeField] private float minDistanceMobile;
+    [SerializeField] private float maxDistanceMobile;
+
+    private float wheelSpeedMobile;
+
+    private bool zoomLastMobile = false;
+
+    [SerializeField] private float targetDistanceMobile;
+
+    private float newZMobile;
+    //Zoom
+
+    // Android
+    ///////////////////////////////////////////////////
+
 
     private GameCycleManager gameCycleManager;
-
-    [SerializeField] private CinemachineVirtualCamera planetCamera;
-    [SerializeField] private CinemachineTransposer transposer;
-
-    [SerializeField] private float wheelSpeed;
-
-    [SerializeField] private float newZ = 0;
-
-    [SerializeField] float zoomSpeed = 0.1f;
-
-    [SerializeField] float followOffsetMin = -0.9f;
-    [SerializeField] float followOffsetMax = -10f;
 
     void Start()
     {
         Input.simulateMouseWithTouches = true;
-        transform.position = startGamePos;
-        transform.rotation = Quaternion.Euler(startGameRotation.x, startGameRotation.y, startGameRotation.z);
         gameCycleManager = FindObjectOfType<GameCycleManager>();
-        planetCamera = gameCycleManager.GetPlanetCamera();
-        transposer = planetCamera.GetCinemachineComponent<CinemachineTransposer>();
     }
 
     void Update()
@@ -60,6 +91,7 @@ public class CameraPlanet : MonoBehaviour
         {
 #if UNITY_EDITOR
             PCCameraUpdate();
+            PCCameraZoom();
 #endif
 #if UNITY_ANDROID
             AndroidCameraUpdate();
@@ -68,71 +100,84 @@ public class CameraPlanet : MonoBehaviour
         }
     }
 
-    void PCCameraUpdate()
+    private void PCCameraUpdate()
     {
-        MouseX = Input.GetAxis("Mouse X");
-        MouseY = Input.GetAxis("Mouse Y");
+        MouseXPC = Input.GetAxis("Mouse X");
+        MouseYPC = Input.GetAxis("Mouse Y");
         if (Input.GetMouseButton(0))
         {
             // get the mouse inputs
-            float y = MouseX * turnSpeed;
-            rotX += MouseY * turnSpeed;
+            float y = MouseXPC * turnSpeedPC;
+            rotXPC += MouseYPC * turnSpeedPC;
             float rotZ = 0;
             // clamp the vertical rotation
-            rotX = Mathf.Clamp(rotX, minTurnAngle, maxTurnAngle);
+            rotXPC = Mathf.Clamp(rotXPC, minTurnAnglePC, maxTurnAnglePC);
 
             // rotate the camera
-            transform.eulerAngles = new Vector3(-rotX, transform.eulerAngles.y + y, rotZ);
+            transform.eulerAngles = new Vector3(-rotXPC, transform.eulerAngles.y + y, rotZ);
         }
 
         transform.position = Target.position;
+    }
+
+    private void PCCameraZoom()
+    {
+        if (transposer == null)
+        {
+            transposer = planetCamera.GetCinemachineComponent<CinemachineTransposer>();
+        }
 
         float mouseWheelInput = Input.GetAxis("Mouse ScrollWheel");
 
-        wheelSpeed = mouseWheelInput;
+        wheelSpeedPC = mouseWheelInput;
 
-        if (wheelSpeed < 0)
+        if (wheelSpeedPC < 0)
         {
-            newZ = transposer.m_FollowOffset.z -= zoomSpeed;
+            newZPC = transposer.m_FollowOffset.z -= zoomSpeedPC;
         }
 
-        if (wheelSpeed > 0)
+        if (wheelSpeedPC > 0)
         {
-            newZ = transposer.m_FollowOffset.z += zoomSpeed;
+            newZPC = transposer.m_FollowOffset.z += zoomSpeedPC;
         }
 
-        if(newZ >= followOffsetMin)
+        if (newZPC >= minDistancePC)
         {
-            newZ = followOffsetMin;
-        }else if (newZ <= followOffsetMax)
+            newZPC = minDistancePC;
+        }
+        else if (newZPC <= maxDistancePC)
         {
-            newZ = followOffsetMax;
+            newZPC = maxDistancePC;
         }
 
-        transposer.m_FollowOffset = new Vector3(transposer.m_FollowOffset.x, transposer.m_FollowOffset.y, newZ);
-
+        transposer.m_FollowOffset = new Vector3(transposer.m_FollowOffset.x, transposer.m_FollowOffset.y, newZPC);
     }
 
     void AndroidCameraUpdate()
     {
-        if (Input.touchCount == 1 && zoomLast == false)
+        if (transposer == null)
+        {
+            transposer = planetCamera.GetCinemachineComponent<CinemachineTransposer>();
+        }
+
+        if (Input.touchCount == 1 && zoomLastMobile == false)
         {
             var touch = Input.GetTouch(0);
 
-            MouseX = Input.GetAxis("Mouse X");
-            MouseY = Input.GetAxis("Mouse Y");
+            MouseXMobile = Input.GetAxis("Mouse X");
+            MouseYMobile = Input.GetAxis("Mouse Y");
 
             if (touch.phase == TouchPhase.Moved)
             {
                 // get the mouse inputs
-                float y = MouseX * turnSpeed;
-                rotX += MouseY * turnSpeed;
+                float y = MouseXMobile * turnSpeedMobile;
+                rotXMobile += MouseYMobile * turnSpeedMobile;
 
                 // clamp the vertical rotation
-                rotX = Mathf.Clamp(rotX, minTurnAngle, maxTurnAngle);
+                rotXMobile = Mathf.Clamp(rotXMobile, minTurnAngleMobile, maxTurnAngleMobile);
 
                 // rotate the camera
-                transform.eulerAngles = new Vector3(-rotX, transform.eulerAngles.y + y, 0);
+                transform.eulerAngles = new Vector3(-rotXMobile, transform.eulerAngles.y + y, 0);
             }
         }
 
@@ -145,7 +190,7 @@ public class CameraPlanet : MonoBehaviour
         // If there are two touches on the device...
         if (Input.touchCount == 2)
         {
-            zoomLast = true;
+            zoomLastMobile = true;
             // Store both touches.
             Touch touchZero = Input.GetTouch(0);
             Touch touchOne = Input.GetTouch(1);
@@ -163,42 +208,42 @@ public class CameraPlanet : MonoBehaviour
                 // Find the difference in the distances between each frame.
                 float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
-                targetDistance += deltaMagnitudeDiff * orthoZoomSpeed;
+                targetDistanceMobile += deltaMagnitudeDiff * orthoZoomSpeedMobile;
 
-                targetDistance = Mathf.Clamp(targetDistance, minDistance, maxDistance);
+                targetDistanceMobile = Mathf.Clamp(targetDistanceMobile, minDistanceMobile, maxDistanceMobile);
 
                 float mouseWheelInput = deltaMagnitudeDiff;
 
-                wheelSpeed = mouseWheelInput;
+                wheelSpeedMobile = mouseWheelInput;
 
-                if (wheelSpeed < 0)
+                if (wheelSpeedMobile < 0)
                 {
-                    newZ = transposer.m_FollowOffset.z += zoomSpeed;
+                    newZMobile = transposer.m_FollowOffset.z += zoomSpeedMobile;
                 }
 
-                if (wheelSpeed > 0)
+                if (wheelSpeedMobile > 0)
                 {
-                    newZ = transposer.m_FollowOffset.z -= zoomSpeed;
+                    newZMobile = transposer.m_FollowOffset.z -= zoomSpeedMobile;
                 }
 
-                if (newZ >= followOffsetMin)
+                if (newZMobile >= minDistanceMobile)
                 {
-                    newZ = followOffsetMin;
+                    newZMobile = minDistanceMobile;
                 }
-                else if (newZ <= followOffsetMax)
+                else if (newZMobile <= maxDistanceMobile)
                 {
-                    newZ = followOffsetMax;
+                    newZMobile = maxDistanceMobile;
                 }
 
-                transposer.m_FollowOffset = new Vector3(transposer.m_FollowOffset.x, transposer.m_FollowOffset.y, newZ);
+                transposer.m_FollowOffset = new Vector3(transposer.m_FollowOffset.x, transposer.m_FollowOffset.y, newZMobile);
 
-                gameCycleManager.uiManager.SetDebug(mouseWheelInput.ToString());
+                gameCycleManager.uiManager.SetDebug(newZMobile.ToString());
             }
         }
 
         if (Input.touchCount == 0)
         {
-            zoomLast = false;
+            zoomLastMobile = false;
         }
     }
 

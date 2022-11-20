@@ -1,22 +1,62 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameCycleManager : MonoBehaviour
 {
-    [SerializeField] private bool homePlanetSelected = false;
-    [SerializeField] private bool homePlanetMarked = false;
-    [SerializeField] private bool homeShow = false;
-    private Galaxy galaxy;
-    private Star homeStar;
-    private CharacterManager characterManager;
-    private Planet currentPlanet = null;
-    private CameraManager cameraManager;
-    [SerializeField] private CinemachineVirtualCamera cinemachineCameraSpace;
-    [SerializeField] private CinemachineVirtualCamera cinemachineCameraPlanet;
-
     public UIManager uiManager;
+
+    [SerializeField] private float money = 100;
+    [SerializeField] private int crystals = 1;
+
+    [SerializeField] private Button buttonStrength;
+    [SerializeField] private TextMeshProUGUI textStrengthName;
+    [SerializeField] private TextMeshProUGUI textStrengthLevel;
+    [SerializeField] private TextMeshProUGUI textStrengthPrice;
+    public float valueStrength = 0.1f;
+    [SerializeField] private float valueStrengthModificator = 0.1f;
+    [SerializeField] private string nameStrength = "Strength";
+    [SerializeField] private int lvStrength = 1;
+    [SerializeField] private string lvStrengthText = "Lv.";
+    [SerializeField] private int indexLvStrengthValue = 1; // add level
+    [SerializeField] private float priceStrength = 15;
+    [SerializeField] int indexPriceStrengthModificator = 5; // price modificator
+
+    [SerializeField] private Button buttonSpeed;
+    [SerializeField] private TextMeshProUGUI textSpeedName;
+    [SerializeField] private TextMeshProUGUI textSpeedLevel;
+    [SerializeField] private TextMeshProUGUI textSpeedPrice;
+    public float valueSpeed = 0.1f;
+    [SerializeField] private float valueSpeedModificator = 0.1f;
+    [SerializeField] private string nameSpeed = "Speed";
+    [SerializeField] private int lvSpeed = 1;
+    [SerializeField] private string lvSpeedText = "Lv.";
+    [SerializeField] private int indexLvSpeedValue = 1; // add level
+    [SerializeField] private float priceSpeed = 15;
+    [SerializeField] int indexPriceSpeedModificator = 5; // price modificator
+
+    [SerializeField] private Button buttonCount;
+    [SerializeField] private TextMeshProUGUI textCountName;
+    [SerializeField] private TextMeshProUGUI textCountLevel;
+    [SerializeField] private TextMeshProUGUI textCountPrice;
+    public int valueCount = 1;
+    [SerializeField] private int valueCountModificator = 1;
+    [SerializeField] private string nameCount = "Count";
+    [SerializeField] private int lvCount = 1;
+    [SerializeField] private string lvCountText = "Lv.";
+    [SerializeField] private int indexLvCountValue = 1; // add level
+    [SerializeField] private float priceCount = 15;
+    [SerializeField] int indexPriceCountModificator = 5; // price modificator
+    private Planet myPlanet;
+
+    public SpaceShark spaceSharkPrefab;
+
+    [SerializeField] private bool gameStarted = false;
+    private bool startSpawn = false;
 
     private void Start()
     {
@@ -25,107 +65,142 @@ public class GameCycleManager : MonoBehaviour
 
     private void LateUpdate()
     {
-        SetHome();
+        ButtonsInteractionUpdate();
+        EconomyTextUpdate();
+        StartUpdater();
     }
 
+    private void StartUpdater()
+    {
+        if (gameStarted)
+        {
+            if (!startSpawn)
+            {
+                uiManager.ButtonsUpdateEnable(true); // show update buttons
+                StartCoroutine(SpawnStartShips());
+                startSpawn = true;
+            }
+        }
+    }
+
+    private void EconomyTextUpdate()
+    {
+        uiManager.SetCrystal(crystals.ToString());
+        uiManager.SetMoney(money.ToString());
+    }
 
     private void StartInit()
     {
+        myPlanet = FindObjectOfType<Planet>();
         uiManager = FindObjectOfType<UIManager>();
-        characterManager = FindObjectOfType<CharacterManager>();
-        cameraManager = FindObjectOfType<CameraManager>();
-        uiManager.ButtonColonizeEnable(false);
-        uiManager.ButtonLandEnable(false);
+
+        UpdateStrengthButton();
+        UpdateSpeedButton();
+        UpdateCountButton();
+
+        uiManager.ButtonsUpdateEnable(false); // hide update buttons
     }
 
-    private void SetHome() // home star selection
+    private void UpdateStrengthButton()
     {
-        if(galaxy == null)
-        {
-            galaxy = FindObjectOfType<Galaxy>();
-        }
+        textStrengthName.text = nameStrength;
+        textStrengthLevel.text = lvStrengthText + lvStrength.ToString();
+        textStrengthPrice.text = priceStrength.ToString();
+    }
 
-        if (!homePlanetSelected)
+    private void UpdateSpeedButton()
+    {
+        textSpeedName.text = nameSpeed;
+        textSpeedLevel.text = lvSpeedText + lvSpeed.ToString();
+        textSpeedPrice.text = priceSpeed.ToString();
+    }
+
+    private void UpdateCountButton()
+    {
+        textCountName.text = nameCount;
+        textCountLevel.text = lvCountText + lvCount.ToString();
+        textCountPrice.text = priceCount.ToString();
+    }
+
+    public void PressStrengthButton()
+    {
+        if (money >= priceStrength)
         {
-            List<Star> stars = galaxy.GetStars();
-            int randomStarIndex = Random.Range(0, stars.Count);
-            homeStar = stars[randomStarIndex];
-            Camera mainCamera = Camera.main;
-            Vector3 cameraPosition = mainCamera.transform.position;
-            mainCamera.transform.position = new Vector3(homeStar.transform.position.x, cameraPosition.y, homeStar.transform.position.z);
-            homeStar.homeStar = true; // Set home
-            homePlanetSelected = true;
+            money -= priceStrength;
+            lvStrength += indexLvStrengthValue;
+            priceStrength += indexPriceStrengthModificator;
+            valueStrength += valueStrengthModificator;
+            UpdateStrengthButton();
+        }
+    }
+
+    public void PressSpeedButton()
+    {
+        if (money >= priceSpeed)
+        {
+            money -= priceSpeed;
+            lvSpeed += indexLvSpeedValue;
+            priceSpeed += indexPriceSpeedModificator;
+            valueSpeed += valueSpeedModificator;
+            UpdateSpeedButton();
+        }
+    }
+
+    public void PressCountButton()
+    {
+        if (money >= priceCount)
+        {
+            money -= priceCount;
+            lvCount += indexLvCountValue;
+            priceCount += indexPriceCountModificator;
+            valueCount += valueCountModificator;
+            myPlanet.ButtonCreateChild(); // spawn one ship
+            UpdateCountButton();
+        }
+    }
+
+    private void ButtonsInteractionUpdate()
+    {
+        if(money >= priceStrength)
+        {
+            buttonStrength.interactable = true;
         }
         else
         {
-            if (!homePlanetMarked)
-            {
-                Renderer homeRenderer = homeStar.GetComponent<Renderer>();
-                homeRenderer.material.color = Color.white;
-                homePlanetMarked = true;
-            }
-            else
-            {
-                Vector3 starPosition = Camera.main.WorldToScreenPoint(homeStar.transform.position);
-                uiManager.IconHomeSetPosition(starPosition);
-                uiManager.ShowHomeButtonStatusUpdate(homeStar);
-                ShowHome();
-            }
+            buttonStrength.interactable = false;
         }
-    }
 
-    private void ShowHome()
-    {
-        Camera cameraMain = Camera.main;
-
-        float cameraSpeed = 0.05f;
-
-        Vector3 cameraPosition = cameraMain.transform.position;
-
-        Vector3 homePosition = homeStar.transform.position;
-
-        Vector3 startPosition = cameraPosition;
-
-        Vector3 endPosition = new Vector3(homePosition.x, cameraPosition.y, homePosition.z - (cameraPosition.z + 144)); // Bad code, must rewrite in future
-
-        float stopDistance = 0.1f;
-
-        if(Vector3.Distance(cameraPosition,endPosition) <= stopDistance)
+        if (money >= priceSpeed)
         {
-            homeShow = false;
+            buttonSpeed.interactable = true;
         }
-
-        if (homeShow)
+        else
         {
-            cameraMain.transform.position = Vector3.Lerp(cameraPosition,endPosition, cameraSpeed);
+            buttonSpeed.interactable = false;
+        }
+
+        if (money >= priceCount)
+        {
+            buttonCount.interactable = true;
+        }
+        else
+        {
+            buttonCount.interactable = false;
         }
     }
 
-    public void ButtonShowHome()
+    public void PressStartGameButton(Transform buttonPressed)
     {
-        homeShow = true;
+        gameStarted = true;
+        buttonPressed.gameObject.SetActive(false);
     }
 
-    public void ButtonCreateCharacterAtPlanet()
+    private IEnumerator SpawnStartShips()
     {
-        //Vector3 createPosition = new Vector3(currentPlanet.transform.position.x, currentPlanet.transform.position.y + 3, currentPlanet.transform.position.z);
-        //characterManager.CreateCharacter(0,createPosition);
-        cinemachineCameraSpace.Priority = 1; // Set Space camera to low priority
-        cinemachineCameraPlanet.Priority = 2; // Set main camera - planet camera
-        //cinemachineCameraPlanet.Follow = currentPlanet.transform;
-        //cinemachineCameraPlanet.LookAt = currentPlanet.transform;
-        CameraPlanet cameraPlanet = FindObjectOfType<CameraPlanet>();
-        cameraPlanet.Target = currentPlanet.transform;
-        uiManager.ButtonLandEnable(false);
-    }
-
-    public void SetCurrentPlanet(Planet planet)
-    {
-        currentPlanet = planet;
-    }
-
-    public CinemachineVirtualCamera GetPlanetCamera()
-    {
-        return cinemachineCameraPlanet;
+        for(int i =0;i < valueCount; i++)
+        {
+            yield return new WaitForSeconds(0.5f);
+            myPlanet.ButtonCreateChild();// spawn one ship
+        }
     }
 }

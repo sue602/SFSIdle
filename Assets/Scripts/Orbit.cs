@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Orbit : MonoBehaviour
 {
-    private Transform target;
+    [SerializeField] private Transform target;
     private float speed = 0;
     [SerializeField] private float speedMin = 1;
     [SerializeField] private float speedMax = 1.5f;
@@ -23,6 +23,7 @@ public class Orbit : MonoBehaviour
 
     private void Update()
     {
+        target = FindObjectOfType<Planet>().transform;
         transform.RotateAround(target.position, Vector3.up, speed * Time.deltaTime);
     }
 

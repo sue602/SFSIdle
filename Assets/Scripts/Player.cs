@@ -8,8 +8,6 @@ public class Player : MonoBehaviour
 {
     public Vector3 MovingPos;
     public string RaycastHitTag;
-    private const string GraviterTag = "Graviter";
-    private const string VehicleTag = "Vehicle";
 
     public float MouseX;
     public float MouseY;
@@ -61,54 +59,19 @@ public class Player : MonoBehaviour
 
         var hit = SetPosition();
 
-        if (hit.transform != null)
+        if (Input.GetKeyUp(KeyCode.Mouse0))
         {
-            //Star
-            Star star = hit.transform.GetComponent<Star>();
 
-            if (star != null)
+            if (hit.transform != null)
             {
-                
-            }
+                //rayast object here
 
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (star != null && !star.homeStar)
+                BuildObject buildObject = hit.transform.GetComponent<BuildObject>();
+
+                if (buildObject != null)
                 {
-                    uiManager.ButtonColonizeEnable(true);
+                    buildObject.Select();
                 }
-                //Star
-            }
-
-            //Planet
-            Planet planet = hit.transform.GetComponent<Planet>();
-
-            if (planet != null)
-            {
-
-            }
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (planet != null)
-                {
-                    gameCycleManager.SetCurrentPlanet(planet);
-                    uiManager.ButtonLandEnable(true);
-                }
-                //Planet
-            }
-
-        }
-        else
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (!UIRaycasted())
-                {
-                    uiManager.ButtonColonizeEnable(false);
-                    uiManager.ButtonLandEnable(false);
-                }
-
             }
         }
     }

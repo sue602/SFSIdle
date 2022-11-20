@@ -6,48 +6,33 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private Button buttonColozine;
-    [SerializeField] private Image iconHome;
-    [SerializeField] private Button buttonShowHome;
-    [SerializeField] private Button buttonLand;
     [SerializeField] private TextMeshProUGUI textDebug;
+    [SerializeField] private TextMeshProUGUI textCrystal;
+    [SerializeField] private TextMeshProUGUI textMoney;
 
-    public void ButtonLandEnable(bool enable)
+    [SerializeField] private Button buttonUpdateStrength;
+    [SerializeField] private Button buttonUpdateSpeed;
+    [SerializeField] private Button buttonUpdateCount;
+
+    public void ButtonsUpdateEnable(bool enable)
     {
-        buttonLand.gameObject.SetActive(enable);
-    }
-
-    public void ButtonColonizeEnable(bool enable)
-    {
-        buttonColozine.gameObject.SetActive(enable);
-    }
-
-    public void IconHomeSetPosition(Vector3 position)
-    {
-        iconHome.transform.position = position;
-    }
-
-    public void ButtonShowHomeEnable(bool enable)
-    {
-        buttonShowHome.gameObject.SetActive(enable);
-    }
-
-    public void ShowHomeButtonStatusUpdate(Star starRenderer)
-    {
-        Renderer renderer = starRenderer.GetComponent<Renderer>();
-
-        if (renderer.isVisible)
-        {
-            ButtonShowHomeEnable(false);
-        }
-        else
-        {
-            ButtonShowHomeEnable(true);
-        }
+        buttonUpdateStrength.gameObject.SetActive(enable);
+        buttonUpdateSpeed.gameObject.SetActive(enable);
+        buttonUpdateCount.gameObject.SetActive(enable);
     }
 
     public void SetDebug(string text)
     {
         textDebug.text = text;
+    }
+
+    public void SetCrystal(string text)
+    {
+        textCrystal.text = text;
+    }
+
+    public void SetMoney(string text)
+    {
+        textMoney.text = text;
     }
 }
