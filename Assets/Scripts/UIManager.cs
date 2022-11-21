@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -14,11 +15,23 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button buttonUpdateSpeed;
     [SerializeField] private Button buttonUpdateCount;
 
+    [SerializeField] private Transform buildScrollView;
+
+    private void Start()
+    {
+        BuildScrollViewEnable(false);
+    }
+
     public void ButtonsUpdateEnable(bool enable)
     {
         buttonUpdateStrength.gameObject.SetActive(enable);
         buttonUpdateSpeed.gameObject.SetActive(enable);
         buttonUpdateCount.gameObject.SetActive(enable);
+    }
+
+    public void BuildScrollViewEnable(bool enable)
+    {
+        buildScrollView.gameObject.SetActive(enable);
     }
 
     public void SetDebug(string text)

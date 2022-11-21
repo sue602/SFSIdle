@@ -313,6 +313,7 @@
 -r:"Library/Bee/artifacts/1300b0aP.dag/Unity.VisualScripting.State.ref.dll"
 -r:"Library/Bee/artifacts/1300b0aP.dag/UnityEngine.UI.ref.dll"
 "Assets/FastMobileBloom/FastMobileBloom.cs"
+"Assets/Scripts/Arrow.cs"
 "Assets/Scripts/Asteroid.cs"
 "Assets/Scripts/AsteroidDestroyed.cs"
 "Assets/Scripts/BuildManager.cs"

@@ -5,13 +5,15 @@ using UnityEngine;
 public class BuildObject : PlanetObject
 {
     private BuildManager buildManager;
+    public BuildObject buildCurrent = null;
     private bool select = false;
-    private BuildObject buildCurrent = null;
-    private int buildIndex = 0;
+    public Arrow arrow;
 
     private void Start()
     {
         buildManager = FindObjectOfType<BuildManager>();
+        arrow = GetComponentInChildren<Arrow>();
+        ArrowEnable(false);
     }
 
     private void Update()
@@ -24,16 +26,30 @@ public class BuildObject : PlanetObject
 
     public void Select()
     {
+        buildManager.BuildPlatformAllSelect(false); // unselect all platform
         select = !select;
         if (buildCurrent == null)
         {
-            Vector3 createPosition = transform.position;
-            buildCurrent = Instantiate(buildManager.buildObjectsPrefabs[buildIndex], createPosition, Quaternion.identity);
+            // Activate arrow selector
+            buildManager.SetBuildPlatform(this);
         }
         else
         {
             Destroy(buildCurrent.gameObject);
             buildCurrent = null;
         }
+    }
+
+    public void ArrowEnable(bool enable)
+    {
+        if(arrow != null)
+        {
+            arrow.gameObject.SetActive(enable);
+        }
+    }
+
+    public void SetSelection(bool selection)
+    {
+        select = selection;
     }
 }

@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
 
     private UIManager uiManager;
     private GameCycleManager gameCycleManager;
+    private BuildManager buildManager;
 
     void Start()
     {
@@ -31,6 +32,7 @@ public class Player : MonoBehaviour
 
         uiManager = FindObjectOfType<UIManager>();
         gameCycleManager = FindObjectOfType<GameCycleManager>();
+        buildManager = FindObjectOfType<BuildManager>();
     }
 
     void Update()
@@ -61,6 +63,11 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
+            if (!UIRaycasted()) // if press mouse over UI
+            {
+                uiManager.BuildScrollViewEnable(false);
+                buildManager.BuildPlatformAllArrowEnable(false);
+            }
 
             if (hit.transform != null)
             {
@@ -71,6 +78,8 @@ public class Player : MonoBehaviour
                 if (buildObject != null)
                 {
                     buildObject.Select();
+                    uiManager.ButtonsUpdateEnable(false);
+                    uiManager.BuildScrollViewEnable(true);
                 }
             }
         }

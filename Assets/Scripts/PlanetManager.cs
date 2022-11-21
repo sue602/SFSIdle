@@ -9,6 +9,7 @@ public class PlanetManager : MonoBehaviour
     [SerializeField] int baseFloorCount = 0;
     [SerializeField] int charactersCount = 0;
     private bool created = false;
+    private BuildManager buildManager;
 
     private void Start()
     {
@@ -17,6 +18,8 @@ public class PlanetManager : MonoBehaviour
 
     private void Initing()
     {
+        buildManager = FindObjectOfType<BuildManager>();
+
         if (!created)
         {
             CreatePlanet();
@@ -42,7 +45,7 @@ public class PlanetManager : MonoBehaviour
             var planetObjectPrefab = planetObjectsPrefabs[index];
 
             var planetObject = Instantiate(planetObjectPrefab, randomPoint, Quaternion.identity);
-            planetObject.transform.parent = null;
+            buildManager.AddBuildPlatform(planetObject);
         }
     }
 
