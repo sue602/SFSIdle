@@ -7,9 +7,11 @@ public class PlanetManager : MonoBehaviour
     [SerializeField] List<PlanetObject> planetObjectsPrefabs = new List<PlanetObject>();
     [SerializeField] List<PlanetCharacter> planetCharactersPrefabs = new List<PlanetCharacter>();
     [SerializeField] int baseFloorCount = 0;
+    [SerializeField] int grassCount = 0;
     [SerializeField] int charactersCount = 0;
     private bool created = false;
     private BuildManager buildManager;
+    [SerializeField] private List<Vector3> verticesUsed = new List<Vector3>(); // list of useed vertices
 
     private void Start()
     {
@@ -33,19 +35,70 @@ public class PlanetManager : MonoBehaviour
     private void CreatePlanet()
     {
         CreatePlanetBaseFloor(0,baseFloorCount); // base floor
+        CreatePlanetGrass(1,grassCount);
         CreatePlanetCharacters(0, charactersCount); // characters
     }
 
     private void CreatePlanetBaseFloor(int index, int count)
     {
+        int arrayIndex = 0;
+
         for(int i = 0;i < count; i++)
         {
-            Vector3 randomPoint = GetRandomVerticePosition();
+            Vector3 createPoint = GetVerticePosition(arrayIndex);
+
+            verticesUsed.Add(createPoint);
+
+            Vector3 rotation = GetVerticeRotation(createPoint);
 
             var planetObjectPrefab = planetObjectsPrefabs[index];
 
-            var planetObject = Instantiate(planetObjectPrefab, randomPoint, Quaternion.identity);
+            var planetObject = Instantiate(planetObjectPrefab, createPoint, Quaternion.identity);
+
+            planetObject.Index = arrayIndex;
+
+            planetObject.transform.rotation = new Quaternion(planetObject.transform.rotation.x, Random.rotation.y, planetObject.transform.rotation.z, 1);
+
+            //planetObject.transform.parent = transform;
+
+            var normalVector = Vector3.Normalize(createPoint);  // Rotate to planet geometry
+
+            planetObject.transform.up = normalVector; // Rotate to planet geometry
+
             buildManager.AddBuildPlatform(planetObject);
+            arrayIndex += 5;
+        }
+    }
+
+    private void CreatePlanetGrass(int index,int count)
+    {
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+
+        var vertices = meshFilter.mesh.vertices;
+        int grassIndex = 1;
+
+        for (int i = 0; i < count; i+=grassIndex)
+        {
+            Vector3 createPoint = GetVerticePosition(i);
+
+            if (!VerticeUsed(createPoint))
+            {
+                Vector3 rotation = GetVerticeRotation(createPoint);
+
+                var planetObjectPrefab = planetObjectsPrefabs[index];
+
+                var planetObject = Instantiate(planetObjectPrefab, createPoint, Quaternion.identity);
+
+                planetObject.Index = i;
+
+                planetObject.transform.rotation = new Quaternion(planetObject.transform.rotation.x, Random.rotation.y, planetObject.transform.rotation.z, 1);
+
+                var normalVector = Vector3.Normalize(createPoint);// Rotate to planet geometry
+
+                planetObject.transform.up = normalVector;  // Rotate to planet geometry
+
+                //planetObject.transform.parent = transform;
+            }
         }
     }
 
@@ -58,7 +111,8 @@ public class PlanetManager : MonoBehaviour
             var planetCharacterPrefab = planetCharactersPrefabs[index];
 
             var planetCharacter = Instantiate(planetCharacterPrefab, randomPoint, Quaternion.identity);
-            planetCharacter.transform.parent = null;
+
+            //planetCharacter.transform.parent = transform;
         }
     }
 
@@ -104,5 +158,20 @@ public class PlanetManager : MonoBehaviour
         verticeReturn = planetPosition - verticePosition;
 
         return verticeReturn;
+    }
+
+    private bool VerticeUsed(Vector3 vertice)
+    {
+        bool result = false;
+
+        for(int i = 0;i < verticesUsed.Count; i++)
+        {
+            if(verticesUsed[i] == vertice)
+            {
+                result = true;
+            }
+        }
+
+        return result;
     }
 }

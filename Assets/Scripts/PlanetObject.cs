@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class PlanetObject : MonoBehaviour
 {
-
+    public int Index = 0;
 }

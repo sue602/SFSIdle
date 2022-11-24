@@ -68,7 +68,8 @@ public class Planet : SpaceObject
             createPosition = createPosition + spawnRightPosition;
         }
         
-        Instantiate(unitsSpacePrefabs[unitIndex], createPosition, Quaternion.identity);
+        var child = Instantiate(unitsSpacePrefabs[unitIndex], createPosition, Quaternion.identity);
+        child.transform.parent = transform;
     }
 
     public void ButtonCreateChild()

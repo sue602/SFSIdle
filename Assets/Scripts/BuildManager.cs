@@ -19,6 +19,7 @@ public class BuildManager : MonoBehaviour
     {
         Vector3 createPosition = currentBuildPlatform.transform.position;
         currentBuildPlatform.buildCurrent = Instantiate(buildObjectsPrefabs[buildIndex], createPosition, Quaternion.identity);
+        //currentBuildPlatform.buildCurrent.transform.parent = currentBuildPlatform.transform;
         uiManager.BuildScrollViewEnable(false);
         currentBuildPlatform.ArrowEnable(false);
     }

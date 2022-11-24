@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI textDebug;
     [SerializeField] private TextMeshProUGUI textCrystal;
     [SerializeField] private TextMeshProUGUI textMoney;
+    [SerializeField] private TextMeshProUGUI textEnergy;
 
     [SerializeField] private Button buttonUpdateStrength;
     [SerializeField] private Button buttonUpdateSpeed;
@@ -47,5 +48,10 @@ public class UIManager : MonoBehaviour
     public void SetMoney(string text)
     {
         textMoney.text = text;
+    }
+
+    public void SetEnergy(string text)
+    {
+        textEnergy.text = text;
     }
 }

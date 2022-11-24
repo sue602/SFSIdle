@@ -11,6 +11,7 @@ public class GameCycleManager : MonoBehaviour
     public UIManager uiManager;
 
     [SerializeField] private float money = 100;
+    [SerializeField] private float energy = 0;
     [SerializeField] private int crystals = 1;
 
     [SerializeField] private Button buttonStrength;
@@ -87,6 +88,7 @@ public class GameCycleManager : MonoBehaviour
     {
         uiManager.SetCrystal(crystals.ToString());
         uiManager.SetMoney(money.ToString());
+        uiManager.SetEnergy(energy.ToString());
     }
 
     private void StartInit()
@@ -99,6 +101,8 @@ public class GameCycleManager : MonoBehaviour
         UpdateCountButton();
 
         uiManager.ButtonsUpdateEnable(false); // hide update buttons
+
+        Application.targetFrameRate = 60;
     }
 
     private void UpdateStrengthButton()
@@ -202,5 +206,15 @@ public class GameCycleManager : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
             myPlanet.ButtonCreateChild();// spawn one ship
         }
+    }
+
+    public void AddEnergy(float value)
+    {
+        energy += value;
+    }
+
+    public void RemoveEnergy(float value)
+    {
+        energy -= value;
     }
 }

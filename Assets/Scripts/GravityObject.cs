@@ -5,12 +5,12 @@ using UnityEngine;
 public class GravityObject : MonoBehaviour
 {
     public GameObject Planet;
-    public new Rigidbody rigidbody;
+    private new Rigidbody rigidbody;
     private Vector3 planetPos;
     private Transform gravityBody;
     private string planetTag = "Graviter";
-    public float gravityForce;
-    public bool Gravited;
+    public float gravityForce = 600;
+    public bool Gravited = true;
 
     void Start()
     {
@@ -19,8 +19,8 @@ public class GravityObject : MonoBehaviour
         rigidbody = this.GetComponent<Rigidbody>();
         Planet = NearPlanet();
         transform.parent = Planet.transform; // Set parent
-        Gravited = true;
-        gravityForce = 600;
+        //Gravited = true;
+        //gravityForce = 600;
 
         // for not characters
     }

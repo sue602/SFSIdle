@@ -344,11 +344,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1427883338478457129}
   - component: {fileID: 4427330499389905518}
+  - component: {fileID: 4985749221249960784}
+  - component: {fileID: 8581104763956801395}
   - component: {fileID: 4985749221249960787}
   - component: {fileID: 575272276237505316}
   - component: {fileID: 9087098607929166328}
-  - component: {fileID: 4985749221249960784}
-  - component: {fileID: 8581104763956801395}
   m_Layer: 0
   m_Name: ChibiCharacter 1
   m_TagString: Untagged
@@ -365,7 +365,7 @@ Transform:
   m_GameObject: {fileID: 1773025139068586899}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 19.4, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 777947399480236396}
@@ -394,6 +394,33 @@ MonoBehaviour:
   targetPosition: {x: 0, y: 0, z: 0}
   changeDirectionTimeRemaining: 0
   changeDirectionTimeRemainingMax: 10
+--- !u!114 &4985749221249960784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773025139068586899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 674e606d49e904b41b60937629aded04, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Planet: {fileID: 0}
+  gravityForce: 3
+  Gravited: 1
+--- !u!114 &8581104763956801395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773025139068586899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 311ffd82eb9aeed418dc47ba7bbac7ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!95 &4985749221249960787
 Animator:
   serializedVersion: 4
@@ -444,34 +471,6 @@ CapsuleCollider:
   m_Height: 2.5898426
   m_Direction: 1
   m_Center: {x: 0, y: 1.2785374, z: 0}
---- !u!114 &4985749221249960784
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773025139068586899}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 674e606d49e904b41b60937629aded04, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Planet: {fileID: 0}
-  rigidbody: {fileID: 0}
-  gravityForce: 0
-  Gravited: 0
---- !u!114 &8581104763956801395
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1773025139068586899}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 311ffd82eb9aeed418dc47ba7bbac7ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1972406989948758216
 GameObject:
   m_ObjectHideFlags: 0

@@ -372,6 +372,7 @@
 "Assets/Scripts/CameraPlanet.cs"
 "Assets/Scripts/Character.cs"
 "Assets/Scripts/Crystal.cs"
+"Assets/Scripts/EnergyStation.cs"
 "Assets/Scripts/FPSManager.cs"
 "Assets/Scripts/Galaxy.cs"
 "Assets/Scripts/GameCycleManager.cs"
